@@ -42,8 +42,6 @@ values
 (1, 1),
 (2, 2);
 
-select * from userrole;
-
 UPDATE users SET `password` = '$2a$10$S8nFUMB8YIEioeWyap24/ucX.dC6v9tXCbpHjJVQUkrXlrH1VLaAS' WHERE id = 1;
 UPDATE users SET `password` = '$2a$10$S8nFUMB8YIEioeWyap24/ucX.dC6v9tXCbpHjJVQUkrXlrH1VLaAS' WHERE id = 2;
 
