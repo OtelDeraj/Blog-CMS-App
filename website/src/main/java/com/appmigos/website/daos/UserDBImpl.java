@@ -66,7 +66,7 @@ public class UserDBImpl implements UserDao{
     }
 
     private Set<Role> getRolesByUserId(int id) {
-       return new HashSet<>(jdbc.query("SELECT * FROM Role ro INNER JOIN UserRole ur on ro.id = ur.roleId", new RoleMapper()));
+       return new HashSet<>(jdbc.query("SELECT * FROM Role ro INNER JOIN UserRole ur on ro.id = ur.roleId WHERE ur.userId = ?", new RoleMapper(), id));
     }
 
     private static class UserMapper implements RowMapper<User> {
