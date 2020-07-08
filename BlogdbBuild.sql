@@ -34,8 +34,8 @@ values
 
 insert into `Role`(`role`)
 values
-('Admin'),
-('Author');
+('ROLE_ADMIN'),
+('ROLE_AUTHOR');
 
 insert into UserRole(userId, roleId)
 values

@@ -6,7 +6,6 @@
 package com.appmigos.website.controllers;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 /**
@@ -14,17 +13,11 @@ import org.springframework.web.bind.annotation.GetMapping;
  * @author Isaia
  */
 @Controller
-public class HomeController {
+public class ContentController {
     
     
-    @GetMapping("/")
-    public String displayHomePage(){
-        return "home";
+    @GetMapping("/content")
+    public String displayContentPage(){
+        return "content";
     }
-    
-    
-    
-    
-    
-    
 }

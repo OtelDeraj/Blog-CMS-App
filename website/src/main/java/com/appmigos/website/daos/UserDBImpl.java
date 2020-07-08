@@ -7,11 +7,14 @@ package com.appmigos.website.daos;
 
 import com.appmigos.website.dtos.Role;
 import com.appmigos.website.dtos.User;
+import com.appmigos.website.exceptions.UserDaoException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -23,31 +26,46 @@ import org.springframework.stereotype.Component;
  * @author Isaia
  */
 @Component
-public class UserDBImpl implements UserDao{
+public class UserDBImpl implements UserDao {
 
     @Autowired
-    JdbcTemplate jdbc;
-    
+    JdbcTemplate template;
+
     @Override
-    public User getUserById(int id) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public User getUserById(int id) throws UserDaoException {
+        try {
+            User toGet = template.queryForObject("SELECT * FROM Users WHERE id = ?", new UserMapper(), id);
+            Set<Role> userRoles = getRolesByUserId(toGet.getId());
+            toGet.setRole(userRoles);
+            return toGet;
+        } catch (DataAccessException ex) {
+            throw new UserDaoException("SQL error has occured in getUserById");
+        }
     }
 
     @Override
     public User getUserByName(String name) {
-        try{
-            User toGet = jdbc.queryForObject("SELECT * FROM Users WHERE username = ?", new UserMapper(), name);
+        try {
+            User toGet = template.queryForObject("SELECT * FROM Users WHERE username = ?", new UserMapper(), name);
             Set<Role> userRoles = getRolesByUserId(toGet.getId());
             toGet.setRole(userRoles);
             return toGet;
-        } catch(DataAccessException ex){
+        } catch (DataAccessException ex) {
             return null;
         }
     }
 
     @Override
-    public List<User> getAllUsers() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public List<User> getAllUsers() throws UserDaoException {
+        try {
+            List<User> allUsers = template.query("SELECT * FROM Users", new UserMapper());
+            if (allUsers.size() == 0) {
+                throw new UserDaoException("No users found");
+            }
+            return allUsers;
+        } catch (DataAccessException ex) {
+            throw new UserDaoException("SQL error has occured in getAllUsers");
+        }
     }
 
     @Override
@@ -66,7 +84,7 @@ public class UserDBImpl implements UserDao{
     }
 
     private Set<Role> getRolesByUserId(int id) {
-       return new HashSet<>(jdbc.query("SELECT * FROM Role ro INNER JOIN UserRole ur on ro.id = ur.roleId", new RoleMapper()));
+        return new HashSet<>(template.query("SELECT * FROM Role ro INNER JOIN UserRole ur on ro.id = ur.roleId WHERE ur.userId = ?", new RoleMapper(), id));
     }
 
     private static class UserMapper implements RowMapper<User> {
@@ -83,7 +101,7 @@ public class UserDBImpl implements UserDao{
     }
 
     private static class RoleMapper implements RowMapper<Role> {
-        
+
         @Override
         public Role mapRow(ResultSet rs, int i) throws SQLException {
             Role toReturn = new Role();
@@ -92,5 +110,5 @@ public class UserDBImpl implements UserDao{
             return toReturn;
         }
     }
-    
+
 }
