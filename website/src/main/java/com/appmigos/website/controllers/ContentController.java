@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 /**
  *
- * @author Isaia
  */
 @Controller
 public class ContentController {
@@ -20,4 +19,5 @@ public class ContentController {
     public String displayContentPage(){
         return "content";
     }
+
 }
