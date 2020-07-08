@@ -8,8 +8,11 @@ package com.appmigos.website.service;
 import com.appmigos.website.daos.UserDao;
 import com.appmigos.website.dtos.Role;
 import com.appmigos.website.dtos.User;
+import com.appmigos.website.exceptions.UserDaoException;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -30,14 +33,18 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User toLoad = uDao.getUserByName(username);
-        Set<GrantedAuthority> fakeRoles = new HashSet<>();
-        
-        for(Role r: toLoad.getRole()){
-            fakeRoles.add(new SimpleGrantedAuthority(r.getRole()));
+        try {
+            User toLoad = uDao.getUserByName(username);
+            Set<GrantedAuthority> fakeRoles = new HashSet<>();
+            
+            for(Role r: toLoad.getRole()){
+                fakeRoles.add(new SimpleGrantedAuthority(r.getRole()));
+            }
+            
+            return new org.springframework.security.core.userdetails.User(username, toLoad.getPassword(), fakeRoles);
+        } catch (UserDaoException ex) {
+            throw new UsernameNotFoundException("Username not found", ex);
         }
-
-        return new org.springframework.security.core.userdetails.User(username, toLoad.getPassword(), fakeRoles);
         
     }
     

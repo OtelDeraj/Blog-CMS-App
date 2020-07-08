@@ -10,15 +10,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 /**
  *
- * @author Schmi
  */
 @Controller
 public class ContentController {
     
+    
     @GetMapping("/content")
-    public String contentPage() {
-        
+    public String displayContentPage(){
         return "content";
     }
-    
+
 }

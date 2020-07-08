@@ -6,6 +6,7 @@
 package com.appmigos.website.daos;
 
 import com.appmigos.website.dtos.User;
+import com.appmigos.website.exceptions.UserDaoException;
 import java.util.List;
 
 /**
@@ -14,16 +15,16 @@ import java.util.List;
  */
 public interface UserDao {
  
-    public User getUserById(int id);
+    public User getUserById(int id) throws UserDaoException;
     
-    public User getUserByName(String name);
+    public User getUserByName(String name) throws UserDaoException;
     
-    public List<User> getAllUsers();
+    public List<User> getAllUsers() throws UserDaoException;
     
-    public void updateUser(User toEdit);
+    public void updateUser(User toEdit) throws UserDaoException;
     
-    public void deleteUser(int id);
+    public void deleteUser(int id) throws UserDaoException;
     
-    public User createUser(User toAdd);
+    public User createUser(User toAdd) throws UserDaoException;
     
 }
